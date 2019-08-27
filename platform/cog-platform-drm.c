@@ -722,8 +722,8 @@ cog_platform_get_view_backend (CogPlatform   *platform,
 
     wpe_host_data.exportable = wpe_view_backend_exportable_fdo_create (&exportable_client,
                                                                        NULL,
-                                                                       drm_data.width,
-                                                                       drm_data.height);
+                                                                       drm_data.width / 2,
+                                                                       drm_data.height / 2);
     g_assert (wpe_host_data.exportable);
 
     wpe_view_data.backend = wpe_view_backend_exportable_fdo_get_view_backend (wpe_host_data.exportable);
