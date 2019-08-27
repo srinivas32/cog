@@ -378,13 +378,6 @@ on_create_view (CogShell *shell, void *user_data G_GNUC_UNUSED)
     // must have succeeded in providing a WebKitWebViewBackend* instance.
     if (!view_backend)
         g_error ("Could not instantiate any WPE backend.");
-
-#if HAVE_DEVICE_SCALING
-    struct wpe_view_backend* wpe_backend =
-        webkit_web_view_backend_get_wpe_backend (view_backend);
-    wpe_view_backend_dispatch_set_device_scale_factor (wpe_backend,
-                                                       s_options.device_scale_factor);
-#endif // HAVE_DEVICE_SCALING
 #endif // !COG_USE_WEBKITGTK
 
     g_autoptr(WebKitWebView) web_view = g_object_new (WEBKIT_TYPE_WEB_VIEW,
@@ -415,6 +408,15 @@ on_create_view (CogShell *shell, void *user_data G_GNUC_UNUSED)
         g_error ("Could not configure the background color. Please rebuild with WebKitGTK support or upgrade to WPE 2.24 and rebuild Cog.");
 #endif
     }
+
+#if !COG_USE_WEBKITGTK && HAVE_DEVICE_SCALING
+    {
+        struct wpe_view_backend* wpe_backend =
+            webkit_web_view_backend_get_wpe_backend (view_backend);
+        wpe_view_backend_dispatch_set_device_scale_factor (wpe_backend, 2);
+                                                           // s_options.device_scale_factor);
+    }
+#endif // !COG_USE_WEBKITGTK && HAVE_DEVICE_SCALING
 
     switch (s_options.on_failure.action_id) {
         case WEBPROCESS_FAIL_ERROR_PAGE:
